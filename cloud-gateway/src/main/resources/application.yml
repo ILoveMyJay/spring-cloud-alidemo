@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            exposedHeaders: "Authorization"
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: auth-service
+          uri: lb://cloud-security
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=0
+        - id: api-service
+          uri: lb://cloud-api
+          predicates:
+            - Path=/api/**,/public/**
+          filters:
+            - StripPrefix=0 
