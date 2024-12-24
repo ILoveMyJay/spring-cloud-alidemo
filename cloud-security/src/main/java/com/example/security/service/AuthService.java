@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Set;
 
 @Slf4j
@@ -118,10 +119,11 @@ public class AuthService {
         log.info("Successfully logged out user: {}", username);
     }
 
-    public boolean validateToken(String token) {
+    public Map<String, Object> validateToken(String token) {
         boolean isValid = jwtService.isAccessTokenValid(token);
         String username = jwtService.extractUsername(token);
+        Set<String> roles = jwtService.extractRoles(token);
         log.debug("Token validation for user {}: {}", username, isValid);
-        return isValid;
+        return Map.of("isValid", isValid, "username", username, "roles", roles);
     }
 } 

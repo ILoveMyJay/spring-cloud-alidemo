@@ -1,6 +1,9 @@
 package com.example.api.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,12 +20,13 @@ public class AdminController {
     }
 
     @PostMapping("/users/{username}/disable")
-    public Map<String, String> disableUser(@PathVariable String username) {
+    public Map<String, String> disableUser(@PathVariable String username, @AuthenticationPrincipal UserDetails currentUser) {
         // 模拟禁用用户
-        return Map.of("message", "User " + username + " has been disabled");
+        return Map.of("message", "User " + username + " has been disabled by " + currentUser.getUsername());
     }
 
     @GetMapping("/system/stats")
+    @PreAuthorize("hasRole('ADMIN')")
     public Map<String, Object> getSystemStats() {
         // 模拟系统统计信息
         return Map.of(

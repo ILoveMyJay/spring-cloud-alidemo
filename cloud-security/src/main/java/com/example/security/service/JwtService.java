@@ -66,7 +66,6 @@ public class JwtService {
             refreshTokenExpiration,
             TimeUnit.SECONDS
         );
-        
         return token;
     }
 

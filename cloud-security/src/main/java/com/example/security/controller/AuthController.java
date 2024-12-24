@@ -33,12 +33,9 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@RequestHeader("Authorization") String refreshToken) {
+    public ResponseEntity<?> refresh(@RequestBody AuthRequest request) {
         try {
-            if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
-                refreshToken = refreshToken.substring(7);
-            }
-            return ResponseEntity.ok(authService.refreshToken(refreshToken));
+            return ResponseEntity.ok(authService.refreshToken(request.getRefreshToken()));
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
@@ -54,10 +51,14 @@ public class AuthController {
     }
 
     @GetMapping("/validate")
-    public ResponseEntity<Boolean> validateToken(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
-        return ResponseEntity.ok(authService.validateToken(token));
+        try {
+            return ResponseEntity.ok(authService.validateToken(token));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 } 
